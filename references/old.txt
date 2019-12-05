@@ -1,0 +1,22 @@
+
+
+# soup = BeautifulSoup(contents, 'html.parser')
+
+class UpworkSpider(scrapy.Spider):
+name = 'upwork'
+allowed_domains = ['https://www.upwork.com']
+start_urls = ['https://www.upwork.com/ab/jobs/search/?q=data%20scientist&sort=recency&user_location_match=1']
+
+def parse(self, response):
+    with open("index.html", 'w') as html_file:
+        html_file.write(response.text)
+    yield {
+        'url':
+    }
+
+    # get all urls in #important_pages
+    # Scrape them all into HTML
+    # Use soup to parse all the pages simply; like get text.
+    # Save all of it in one file
+
+    # print(soup.find_all('a'))
