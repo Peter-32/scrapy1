@@ -1,0 +1,1 @@
+# re.sub("(jobs.|careers.|.com)","", str.replace("https://","").split(".com")[0])
