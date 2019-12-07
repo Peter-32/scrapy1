@@ -1,1 +1,4 @@
 # re.sub("(jobs.|careers.|.com)","", str.replace("https://","").split(".com")[0])
+
+
+#     'https://curvature.wd5.myworkdayjobs.com/External/1/refreshFacet/318c8bb6f553100021d223d9780d30be',
