@@ -12,6 +12,9 @@ except:
     pass
 os.mkdir("html")
 
+if not os.path.exists("../../data/processed"):
+    os.mkdir("../../data/processed")
+
 class CJSpider(scrapy.Spider):
     name = "cj"
     start_urls = ['https://jobs.cj.com/jobs/city/santa-barbara#/']
