@@ -4,7 +4,7 @@ import roughviz
 import pandas as pd
 from nltk.tokenize import word_tokenize
 
-# Clean text
+# Clean and Count
 with open('../../data/processed/text.txt', 'r') as file:
     text = file.read()
 with open('../../data/raw/programming_languages_list.txt', 'r') as file:
@@ -19,13 +19,11 @@ words = word_tokenize(text)
 words = [re.sub(r'[^A-Za-z_\s\-!+*#]', '', w).lower() for w in words]
 words = [wnl.lemmatize(w) for w in words if w.strip() != '']
 words = ["c#" if x == "csharp" else x for x in words]
-
-# Count words
 fd = nltk.FreqDist(words)
 with open('../../data/processed/word_count.txt', 'w') as file:
     file.write("\n".join([str((x,y)) for (x,y) in fd.most_common(100000) if x in programming_languages]))
 
-# Display Graph (Jupyter Notebook only)
+# Results (Jupyter Notebook only)
 common_words = [(x,y) for (x,y) in fd.most_common(100000) if x in programming_languages]
 df = pd.DataFrame()
 df["word"] = [x for (x,y) in common_words]

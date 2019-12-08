@@ -15,6 +15,7 @@ os.mkdir("html")
 if not os.path.exists("../../data/processed"):
     os.mkdir("../../data/processed")
 
+# Customize Spiders
 class CJSpider(scrapy.Spider):
     name = "cj"
     start_urls = ['https://jobs.cj.com/jobs/city/santa-barbara#/']
@@ -221,7 +222,7 @@ process.crawl(OntraPortSpider)
 process.crawl(RipTideSpider)
 process.start()
 
-# Extracting Text
+# Extract Text
 text = []
 for filename in os.listdir("html"):
     html = open("html/{}".format(filename)).read()
