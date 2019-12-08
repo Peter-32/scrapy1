@@ -2,3 +2,10 @@
 
 
 #     'https://curvature.wd5.myworkdayjobs.com/External/1/refreshFacet/318c8bb6f553100021d223d9780d30be',
+#     'https://www.appfolioinc.com/jobs-openings', # santa barbara only
+
+next_page = response.css('.next').get()
+m = re.search('href="(.*)"', next_page)
+if m:
+    next_page = "https://jobs.raytheon.com" + m.group(1)
+yield response.follow(next_page, self.parse)

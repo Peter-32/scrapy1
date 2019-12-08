@@ -12,13 +12,7 @@ except:
 os.mkdir("html")
 
 # start_urls = [
-#     'https://inogen.applicantpro.com/jobs/', # goleta only
-#     'https://careers.sonos.com/jobs/SearchJobs/?3_72_3=%5B%2215814%22%5D',
-#     'https://flexerasoftware.wd1.myworkdayjobs.com/FlexeraSoftware/1/refreshFacet/318c8bb6f553100021d223d9780d30be',
-#     'https://www.transphormusa.com/en/company/#careers',
-#     'https://www.d2tech.com/careers',
-#     'https://www.appfolioinc.com/jobs-openings', # santa barbara only
-#     'https://careers.yardi.com/openings/?loc=1157',
+
 #     'https://www.invoca.com/company/careers/#job_listing', # santa barbara only
 #     'https://talent.impact.com/jobs/santa-barbara/#',
 #     'https://www.logicmonitor.com/careers/',
@@ -38,6 +32,7 @@ class CJSpider(scrapy.Spider):
     def parse(self, response):
         next_pages = response.css('#conversant-table a::attr(href)').getall()
         next_pages = ["https://jobs.cj.com" + x for x in next_pages if "/jobs/category/" not in x]
+        next_pages = list(set(next_pages))
         for href in next_pages:
             yield response.follow(href, self.parse_listing)
 
@@ -54,11 +49,20 @@ class CJSpider(scrapy.Spider):
 
 class RaytheonSpider(scrapy.Spider):
     name = "raytheon"
-    start_urls = ['https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2']
+    start_urls = ['https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2&p=1',
+                  'https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2&p=2',
+                  'https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2&p=3',
+                  'https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2&p=4',
+                  'https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2&p=5',
+                  'https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2&p=6',
+                  'https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2&p=7',
+                  'https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2&p=8',
+                  'https://jobs.raytheon.com/search-jobs/United%20States?orgIds=4679&ac=22812&alp=6252001&alt=2&p=9']
 
     def parse(self, response):
         next_pages = response.css('#search-results-list a::attr(href)').getall()
         next_pages = ["https://jobs.raytheon.com" + x for x in next_pages if x != "#"]
+        next_pages = list(set(next_pages))
         for href in next_pages:
             yield response.follow(href, self.parse_listing)
 
@@ -81,6 +85,7 @@ class InogenSpider(scrapy.Spider):
 
     def parse(self, response):
         next_pages = response.css('.job-listings a::attr(href)').getall()
+        next_pages = list(set(next_pages))
         for href in next_pages:
             yield response.follow(href, self.parse_listing)
 
@@ -95,8 +100,76 @@ class InogenSpider(scrapy.Spider):
             f.write(response.body)
         self.log('Saved file {}'.format(filename))
 
+class SonosSpider(scrapy.Spider):
+    name = "sonos"
+    start_urls = ['https://careers.sonos.com/jobs/SearchJobs/?3_72_3=%5B%2215814%22%5D']
+
+    def parse(self, response):
+        next_pages = response.css('.group a::attr(href)').getall()
+        next_pages = [x for x in next_pages if x != "#" and "facebook" not in x and "share" not in x]
+        next_pages = list(set(next_pages))
+        for href in next_pages:
+            yield response.follow(href, self.parse_listing)
+
+    def parse_listing(self, response):
+        page = response.url.split("/")[-2]
+        if page == "en":
+            return
+        filename = 'html/{}_{}.html'.format(self.name, page)
+        i = 2
+        while os.path.exists(filename):
+            filename = "html/{}_{}_{}.html".format(self.name, page, str(i).zfill(3))
+            i += 1
+        with open(filename, 'wb') as f:
+            f.write(response.body)
+        self.log('Saved file {}'.format(filename))
+
+class D2TechSpider(scrapy.Spider):
+    name = "d2tech"
+    start_urls = ['https://www.d2tech.com/careers']
+
+    def parse(self, response):
+        # response = response.css('.main-content')
+        filename = 'html/{}.html'.format(self.name)
+        i = 2
+        while os.path.exists(filename):
+            filename = "html/{}_{}.html".format(self.name, str(i).zfill(3))
+            i += 1
+        with open(filename, 'wb') as f:
+            f.write(response.body)
+        self.log('Saved file {}'.format(filename))
+
+class YardiSpider(scrapy.Spider):
+    name = "yardi"
+    start_urls = ['https://careers.yardi.com/openings/?loc=1157']
+
+    def parse(self, response):
+        next_pages = response.css('#resultsList a::attr(href)').getall()
+        next_pages = list(set(next_pages))
+        for href in next_pages:
+            yield response.follow(href, self.parse_listing)
+
+    def parse_listing(self, response):
+        page = response.url.split("/")[-2]
+        if page == "en":
+            return
+        filename = 'html/{}_{}.html'.format(self.name, page)
+        i = 2
+        while os.path.exists(filename):
+            filename = "html/{}_{}_{}.html".format(self.name, page, str(i).zfill(3))
+            i += 1
+        with open(filename, 'wb') as f:
+            f.write(response.body)
+        self.log('Saved file {}'.format(filename))
+
+
+
 process = CrawlerProcess()
-process.crawl(CJSpider)
-process.crawl(RaytheonSpider)
-process.crawl(InogenSpider)
+# process.crawl(CJSpider)
+# process.crawl(RaytheonSpider)
+# process.crawl(InogenSpider)
+# process.crawl(SonosSpider)
+# process.crawl(D2TechSpider)
+process.crawl(YardiSpider)
+
 process.start() # the script will block here until all crawling jobs are finished
