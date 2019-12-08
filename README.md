@@ -1,7 +1,7 @@
 scrapy1
 ==============================
 
-A short description of the project.
+Takes about 20 seconds to get approximately 500 job listings from 10 sites.
 
 Project Organization
 ------------

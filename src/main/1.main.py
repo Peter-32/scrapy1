@@ -11,20 +11,6 @@ except:
     pass
 os.mkdir("html")
 
-# start_urls = [
-
-#     'https://www.invoca.com/company/careers/#job_listing', # santa barbara only
-#     'https://talent.impact.com/jobs/santa-barbara/#',
-#     'https://www.logicmonitor.com/careers/',
-#     'https://www.ghs.com/jobs_usa.html',
-#     'https://ontraport.com/careers/jobs/engineering',
-#     'https://riptideio.com/careers-join-us/',
-#     'https://hginsights.com/careers/',
-#     'https://novacoast.com/jobs/', # SB only
-# ]
-
-
-
 class CJSpider(scrapy.Spider):
     name = "cj"
     start_urls = ['https://jobs.cj.com/jobs/city/santa-barbara#/']
@@ -129,7 +115,6 @@ class D2TechSpider(scrapy.Spider):
     start_urls = ['https://www.d2tech.com/careers']
 
     def parse(self, response):
-        # response = response.css('.main-content')
         filename = 'html/{}.html'.format(self.name)
         i = 2
         while os.path.exists(filename):
@@ -162,14 +147,72 @@ class YardiSpider(scrapy.Spider):
             f.write(response.body)
         self.log('Saved file {}'.format(filename))
 
+class ImpactSpider(scrapy.Spider):
+    name = "impact"
+    start_urls = ['https://talent.impact.com/jobs/santa-barbara/#']
 
+    def parse(self, response):
+        filename = 'html/{}.html'.format(self.name)
+        i = 2
+        while os.path.exists(filename):
+            filename = "html/{}_{}.html".format(self.name, str(i).zfill(3))
+            i += 1
+        with open(filename, 'wb') as f:
+            f.write(response.body)
+        self.log('Saved file {}'.format(filename))
+
+class GHSSpider(scrapy.Spider):
+    name = "ghs"
+    start_urls = ['https://www.ghs.com/jobs_usa.html']
+
+    def parse(self, response):
+        filename = 'html/{}.html'.format(self.name)
+        i = 2
+        while os.path.exists(filename):
+            filename = "html/{}_{}.html".format(self.name, str(i).zfill(3))
+            i += 1
+        with open(filename, 'wb') as f:
+            f.write(response.body)
+        self.log('Saved file {}'.format(filename))
+
+class OntraPortSpider(scrapy.Spider):
+    name = "ontraport"
+    start_urls = ['https://ontraport.com/careers/jobs/engineering']
+
+    def parse(self, response):
+        filename = 'html/{}.html'.format(self.name)
+        i = 2
+        while os.path.exists(filename):
+            filename = "html/{}_{}.html".format(self.name, str(i).zfill(3))
+            i += 1
+        with open(filename, 'wb') as f:
+            f.write(response.body)
+        self.log('Saved file {}'.format(filename))
+
+class RipTideSpider(scrapy.Spider):
+    name = "riptide"
+    start_urls = ['https://riptideio.com/careers-join-us/']
+
+    def parse(self, response):
+        filename = 'html/{}.html'.format(self.name)
+        i = 2
+        while os.path.exists(filename):
+            filename = "html/{}_{}.html".format(self.name, str(i).zfill(3))
+            i += 1
+        with open(filename, 'wb') as f:
+            f.write(response.body)
+        self.log('Saved file {}'.format(filename))
 
 process = CrawlerProcess()
-# process.crawl(CJSpider)
-# process.crawl(RaytheonSpider)
-# process.crawl(InogenSpider)
-# process.crawl(SonosSpider)
-# process.crawl(D2TechSpider)
+process.crawl(CJSpider)
+process.crawl(RaytheonSpider)
+process.crawl(InogenSpider)
+process.crawl(SonosSpider)
+process.crawl(D2TechSpider)
 process.crawl(YardiSpider)
+process.crawl(ImpactSpider)
+process.crawl(GHSSpider)
+process.crawl(OntraPortSpider)
+process.crawl(RipTideSpider)
 
 process.start() # the script will block here until all crawling jobs are finished
